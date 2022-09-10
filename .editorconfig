@@ -1,0 +1,6 @@
+[*.{js,jsx,ts,tsx,md,mdx}]
+tab_width = 2
+charset = utf-8
+end_of_line = lf
+indent_style = space
+insert_final_newline = true
