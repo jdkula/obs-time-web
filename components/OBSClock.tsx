@@ -12,6 +12,13 @@ interface CommonOptions {
   color?: string;
   blinkColons?: boolean;
 
+  font: {
+    family: string;
+    bold: boolean;
+    italic: boolean;
+    underline: boolean;
+  };
+
   autoResetStr?: string;
   durationStr?: string;
 }
@@ -158,6 +165,12 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   width: 100%;
   height: 100%;
   color: ${(props) => props.clock.color ?? 'inherit'};
+
+  font-family: ${(props) => props.clock.font.family || 'inherit'};
+  font-weight: ${(props) => (props.clock.font.bold ? '700' : 'normal')};
+  font-style: ${(props) => (props.clock.font.italic ? 'italic' : 'normal')};
+  text-decoration: ${(props) =>
+    props.clock.font?.underline ? 'underline' : 'none'};
 
   ${(props) =>
     props.clock.type !== 'clock' && props.clock.colorOnPaused

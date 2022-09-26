@@ -1,4 +1,10 @@
-import { Css, Download } from '@mui/icons-material';
+import {
+  CopyAll,
+  Css,
+  Download,
+  Info,
+  InfoOutlined,
+} from '@mui/icons-material';
 import {
   AppBar,
   Button,
@@ -35,6 +41,14 @@ export default function Home() {
   const [importing, setImporting] = useState(false);
   const [importValue, setImportValue] = useState('');
   const [cssInfoOpen, setShowCssInfo] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    window.setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+  }, [copied]);
 
   useEffect(() => {
     try {
@@ -54,13 +68,34 @@ export default function Home() {
     setState({ id: Date.now().toString() });
   }, [clock?.type]);
 
-  const hook = (defaultClock: OBSClockDefinition) => {
+  const hook = (
+    defaultClock: Omit<OBSClockDefinition, 'font'> &
+      Pick<Partial<OBSClockDefinition>, 'font'>
+  ) => {
     return {
-      onClick: () => setClock(defaultClock),
+      onClick: () =>
+        setClock({
+          ...defaultClock,
+          font: defaultClock.font ?? {
+            family: '',
+            bold: false,
+            italic: false,
+            underline: false,
+          },
+        } as OBSClockDefinition),
       variant:
         clock?.type === defaultClock.type ? ('contained' as const) : undefined,
     };
   };
+
+  const obsLink =
+    typeof window === 'undefined'
+      ? ''
+      : `${window.location.protocol}//${
+          window.location.host
+        }/obs?id=${encodeURIComponent(state.id)}&config=${encodeURIComponent(
+          JSON.stringify(clock)
+        )}`;
 
   return (
     <div>
@@ -106,27 +141,34 @@ export default function Home() {
               aria-labelledby="type-label"
               fullWidth
             >
-              <Button {...hook({ type: 'clock' })} fullWidth>
+              <Button {...hook({ ...clock, type: 'clock' })} fullWidth>
                 Clock
               </Button>
               <Button
                 {...hook({
+                  ...clock,
                   type: 'stopwatch',
                   startMs: 0,
                   autoStart: true,
-                  resetAfter: 3600 * 1000,
-                })}
+                  resetAfter:
+                    (clock?.type !== 'clock' && clock?.resetAfter) ||
+                    3600 * 1000,
+                } as OBSClockDefinition)}
                 fullWidth
               >
                 Stopwatch
               </Button>
               <Button
                 {...hook({
+                  ...clock,
                   type: 'timer',
-                  durationMs: 60 * 1000,
+                  durationMs:
+                    (clock?.type === 'timer' && clock.durationMs) || 60 * 1000,
                   autoStart: true,
-                  resetAfter: 3600 * 1000,
-                })}
+                  resetAfter:
+                    (clock?.type !== 'clock' && clock?.resetAfter) ||
+                    3600 * 1000,
+                } as OBSClockDefinition)}
                 fullWidth
               >
                 Timer
@@ -148,25 +190,29 @@ export default function Home() {
                 <FormLabel sx={{ marginRight: '0.5rem' }}>
                   URL for OBS:
                 </FormLabel>
-                <TextField
-                  sx={{ flexGrow: 1 }}
-                  size="small"
-                  value={
-                    typeof window === 'undefined'
-                      ? ''
-                      : `${window.location.protocol}//${
-                          window.location.host
-                        }/obs?id=${encodeURIComponent(
-                          state.id
-                        )}&config=${encodeURIComponent(JSON.stringify(clock))}`
-                  }
-                />
-                <Tooltip title="CSS Info" arrow placement="top">
+                <TextField sx={{ flexGrow: 1 }} size="small" value={obsLink} />
+                <Tooltip
+                  title={!copied ? 'Copy link' : 'Copied!'}
+                  enterDelay={0}
+                  placement="top"
+                >
+                  <IconButton
+                    sx={{ marginLeft: '8px' }}
+                    onClick={() =>
+                      navigator.clipboard
+                        .writeText(obsLink)
+                        .then(() => setCopied(true))
+                    }
+                  >
+                    <CopyAll />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="CSS Info" arrow placement="top" enterDelay={0}>
                   <IconButton
                     sx={{ marginLeft: '8px' }}
                     onClick={() => setShowCssInfo(true)}
                   >
-                    <Css />
+                    <InfoOutlined />
                   </IconButton>
                 </Tooltip>
               </Box>

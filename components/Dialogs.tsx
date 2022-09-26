@@ -6,7 +6,9 @@ export const CssDialogueContent = () => (
     <DialogContent>
       <Typography paragraph>
         You can further customize the look of the timer using the following CSS
-        classes:
+        classes in OBS. All of them are applied to the same element (
+        <code>.clock</code>), so you can write transitions and animations if you
+        wish!
       </Typography>
       <Paper>
         <code>

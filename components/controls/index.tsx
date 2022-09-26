@@ -14,6 +14,7 @@ import {
   NegativeColorControl,
 } from './ColorControl';
 import { DurationControl } from './DurationControl';
+import { FontControl } from './FontControl';
 import { RestartModeControl, RestartModeConfigure } from './RestartModeControl';
 import { StartModeControl } from './StartModeControl';
 import { TimeZoneControl, TimeZoneSelection } from './TimeZoneControl';
@@ -76,6 +77,7 @@ export const Controls: ControlComponent = ({ clock, setClock }) => (
       )}
       <BlinkColonsControl clock={clock} setClock={setClock} />
       <ShowMillisecondsControl clock={clock} setClock={setClock} />
+      <FontControl clock={clock} setClock={setClock} />
     </Box>
   </div>
 );
