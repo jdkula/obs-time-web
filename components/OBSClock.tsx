@@ -10,6 +10,8 @@ import styles from '~/styles/Clock.module.css';
 interface CommonOptions {
   showMs?: boolean;
   color?: string;
+  outline?: string;
+  outlineWidth?: string;
   blinkColons?: boolean;
 
   font: {
@@ -27,7 +29,11 @@ interface CountOptions extends CommonOptions {
   autoStart?: boolean;
   resetAfter?: number;
   colorOnPaused?: string;
+  outlineOnPaused?: string;
+  outlineWidthOnPaused?: string;
   colorOnStopped?: string;
+  outlineOnStopped?: string;
+  outlineWidthOnStopped?: string;
 }
 
 export interface ClockDefinition extends CommonOptions {
@@ -46,7 +52,11 @@ export interface TimerDefinition extends CountOptions {
   durationMs: number;
   stopAtZero?: boolean;
   colorOnNegative?: string;
+  outlineOnNegative?: string;
+  outlineWidthOnNegative?: string;
   colorOnZero?: string;
+  outlineOnZero?: string;
+  outlineWidthOnZero?: string;
 }
 
 export type OBSClockDefinition =
@@ -165,6 +175,20 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   width: 100%;
   height: 100%;
   color: ${(props) => props.clock.color ?? 'inherit'};
+  ${(props) =>
+    props.clock.outline
+      ? css`
+          text-shadow: -${props.clock.outlineWidth ?? 1}px ${props.clock
+                .outlineWidth ?? 1}px 0 ${props.clock.outline},
+            ${props.clock.outlineWidth ?? 1}px
+              ${props.clock.outlineWidth ?? 1}px 0 ${props.clock.outline},
+            ${props.clock.outlineWidth ?? 1}px -${props.clock.outlineWidth ??
+              1}px 0 ${props.clock.outline},
+            -${props.clock.outlineWidth ?? 1}px -${props.clock.outlineWidth ??
+              1}px
+              0 ${props.clock.outline};
+        `
+      : ''}
 
   font-family: ${(props) => props.clock.font.family || 'inherit'};
   font-weight: ${(props) => (props.clock.font.bold ? '700' : 'normal')};
@@ -172,41 +196,105 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   text-decoration: ${(props) =>
     props.clock.font?.underline ? 'underline' : 'none'};
 
-  ${(props) =>
-    props.clock.type !== 'clock' && props.clock.colorOnPaused
-      ? css`
-          &.clock-status-paused {
+  &.clock-status-paused {
+    ${(props) =>
+      props.clock.type !== 'clock' && props.clock.colorOnPaused
+        ? css`
             color: ${props.clock.colorOnPaused};
-          }
-        `
-      : ''}
+          `
+        : ''}
 
-  ${(props) =>
-    props.clock.type !== 'clock' && props.clock.colorOnStopped
-      ? css`
-          &.clock-status-stopped {
+    ${(props) =>
+      props.clock.type !== 'clock' && props.clock.outlineOnPaused
+        ? css`
+            text-shadow: -${props.clock.outlineWidthOnPaused ?? 1}px ${props
+                  .clock.outlineWidthOnPaused ?? 1}px 0 ${props.clock.outlineOnPaused},
+              ${props.clock.outlineWidthOnPaused ?? 1}px
+                ${props.clock.outlineWidthOnPaused ?? 1}px 0
+                ${props.clock.outlineOnPaused},
+              ${props.clock.outlineWidthOnPaused ?? 1}px -${props.clock
+                  .outlineWidthOnPaused ?? 1}px 0 ${props.clock.outlineOnPaused},
+              -${props.clock.outlineWidthOnPaused ?? 1}px -${props.clock
+                  .outlineWidthOnPaused ?? 1}px
+                0 ${props.clock.outlineOnPaused};
+          `
+        : ''}
+  }
+
+  &.clock-status-stopped {
+    ${(props) =>
+      props.clock.type !== 'clock' && props.clock.colorOnStopped
+        ? css`
             color: ${props.clock.colorOnStopped};
-          }
-        `
-      : ''}
-      
-      ${(props) =>
-    props.clock.type === 'timer' && props.clock.colorOnZero
-      ? css`
-          &.clock-status-zero {
+          `
+        : ''}
+
+    ${(props) =>
+      props.clock.type !== 'clock' && props.clock.outlineOnStopped
+        ? css`
+            text-shadow: -${props.clock.outlineWidthOnStopped ?? 1}px ${props
+                  .clock.outlineWidthOnStopped ?? 1}px 0 ${props.clock.outlineOnStopped},
+              ${props.clock.outlineWidthOnStopped ?? 1}px
+                ${props.clock.outlineWidthOnStopped ?? 1}px 0
+                ${props.clock.outlineOnStopped},
+              ${props.clock.outlineWidthOnStopped ?? 1}px -${props.clock
+                  .outlineWidthOnStopped ?? 1}px 0 ${props.clock.outlineOnStopped},
+              -${props.clock.outlineWidthOnStopped ?? 1}px -${props.clock
+                  .outlineWidthOnStopped ?? 1}px
+                0 ${props.clock.outlineOnStopped};
+          `
+        : ''}
+  }
+
+  &.clock-status-zero {
+    ${(props) =>
+      props.clock.type === 'timer' && props.clock.colorOnZero
+        ? css`
             color: ${props.clock.colorOnZero};
-          }
-        `
-      : ''}
-      
-      ${(props) =>
-    props.clock.type === 'timer' && props.clock.colorOnNegative
-      ? css`
-          &.clock-status-negative {
+          `
+        : ''}
+
+    ${(props) =>
+      props.clock.type === 'timer' && props.clock.outlineOnZero
+        ? css`
+            text-shadow: -${props.clock.outlineWidthOnZero ?? 1}px ${props.clock
+                  .outlineWidthOnZero ?? 1}px 0 ${props.clock.outlineOnZero},
+              ${props.clock.outlineWidthOnZero ?? 1}px
+                ${props.clock.outlineWidthOnZero ?? 1}px 0
+                ${props.clock.outlineOnZero},
+              ${props.clock.outlineWidthOnZero ?? 1}px -${props.clock
+                  .outlineWidthOnZero ?? 1}px 0 ${props.clock.outlineOnZero},
+              -${props.clock.outlineWidthOnZero ?? 1}px -${props.clock
+                  .outlineWidthOnZero ?? 1}px
+                0 ${props.clock.outlineOnZero};
+          `
+        : ''}
+  }
+
+  &.clock-status-negative {
+    ${(props) =>
+      props.clock.type === 'timer' && props.clock.colorOnNegative
+        ? css`
             color: ${props.clock.colorOnNegative};
-          }
-        `
-      : ''}
+          `
+        : ''}
+
+    ${(props) =>
+      props.clock.type === 'timer' && props.clock.outlineOnNegative
+        ? css`
+            text-shadow: -${props.clock.outlineOnNegative ?? 1}px ${props.clock
+                  .outlineOnNegative ?? 1}px 0 ${props.clock.outlineOnNegative},
+              ${props.clock.outlineOnNegative ?? 1}px
+                ${props.clock.outlineOnNegative ?? 1}px 0
+                ${props.clock.outlineOnNegative},
+              ${props.clock.outlineOnNegative ?? 1}px -${props.clock
+                  .outlineOnNegative ?? 1}px 0 ${props.clock.outlineOnNegative},
+              -${props.clock.outlineOnNegative ?? 1}px -${props.clock
+                  .outlineOnNegative ?? 1}px
+                0 ${props.clock.outlineOnNegative};
+          `
+        : ''}
+  }
 
   & > div:not(${styles.controls}) {
     width: 100%;

@@ -3,9 +3,11 @@ import { useRef, useState } from 'react';
 import { SketchPicker } from 'react-color';
 
 export function ColorEditorButton({
+  label,
   color,
   onChange,
 }: {
+  label: string;
   color: string | null;
   onChange: (color: string) => void;
 }) {
@@ -26,7 +28,7 @@ export function ColorEditorButton({
         }
         variant={color ? 'contained' : 'outlined'}
       >
-        Edit
+        {label}
       </Button>
       <Popover
         open={editing}
