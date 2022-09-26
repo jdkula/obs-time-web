@@ -9,7 +9,9 @@ import {
   DialogTitle,
   FormLabel,
   IconButton,
+  SxProps,
   TextField,
+  Theme,
   Toolbar,
   Tooltip,
   Typography,
@@ -25,7 +27,9 @@ import {
   OBSClockDefinition,
 } from '~/components/OBSClock';
 
-const Home: NextPage = () => {
+import styles from '~/styles/index.styles';
+
+export default function Home() {
   const [clock, setClock] = useState<OBSClockDefinition>();
   const [state, setState] = useState<ClockState>({ id: Date.now().toString() });
   const [importing, setImporting] = useState(false);
@@ -89,29 +93,8 @@ const Home: NextPage = () => {
         </Toolbar>
       </AppBar>
       <Container>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: { xs: 'stretch', md: 'space-around' },
-            margin: '2rem',
-            '& > div': {
-              padding: '2rem',
-              border: '1px solid gray',
-              flexGrow: 1,
-              width: {
-                md: '2%',
-              },
-            },
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
+        <Box sx={styles.controlsFrame}>
+          <Box sx={styles.controlsContainer}>
             <Typography
               variant="overline"
               sx={{ borderBottom: '1px solid gray', marginBottom: '1rem' }}
@@ -161,15 +144,7 @@ const Home: NextPage = () => {
               {clock && <Controls clock={clock} setClock={setClock} />}
             </Box>
             {clock && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  width: '100%',
-                  marginTop: '1rem',
-                }}
-              >
+              <Box sx={styles.exportContainer}>
                 <FormLabel sx={{ marginRight: '0.5rem' }}>
                   URL for OBS:
                 </FormLabel>
@@ -211,18 +186,7 @@ const Home: NextPage = () => {
               Preview
             </Typography>
             <Box sx={{ flexGrow: 1, alignSelf: 'stretch' }}>
-              <Box
-                sx={{
-                  height: '100%',
-                  width: '100%',
-                  border: '1px solid #333',
-                  background: 'black',
-                  backgroundImage:
-                    'linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%)',
-                  backgroundSize: '20px 20px',
-                  backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-                }}
-              >
+              <Box sx={styles.previewContainer}>
                 {clock && (
                   <OBSClock clock={clock} state={state} setState={setState} />
                 )}
@@ -233,6 +197,4 @@ const Home: NextPage = () => {
       </Container>
     </div>
   );
-};
-
-export default Home;
+}
