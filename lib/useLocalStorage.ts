@@ -6,7 +6,7 @@ export function useLocalStorage<T>(
 export function useLocalStorage<T>(
   key: string,
   defaultValue: T
-): [T, Dispatch<SetStateAction<T | null>>];
+): [T, Dispatch<SetStateAction<T>>];
 export function useLocalStorage<T>(
   key: string,
   defaultValue?: T

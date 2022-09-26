@@ -1,81 +1,50 @@
-import { Pause, PlayArrow, Refresh } from '@mui/icons-material';
+import { Css, Download } from '@mui/icons-material';
 import {
   AppBar,
-  Autocomplete,
   Button,
   ButtonGroup,
-  Checkbox,
   Container,
-  CssBaseline,
-  FormControlLabel,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   FormLabel,
-  getContrastRatio,
-  getLuminance,
   IconButton,
-  Popover,
   TextField,
   Toolbar,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import type { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
-import { SketchPicker } from 'react-color';
+import { useEffect, useState } from 'react';
+import { Controls } from '~/components/controls';
+import { CssDialogueContent } from '~/components/Dialogs';
 import {
   ClockState,
   OBSClock,
   OBSClockDefinition,
 } from '~/components/OBSClock';
-import { parseDuration } from '~/lib/util';
-
-function ColorEditorButton({
-  color,
-  onChange,
-}: {
-  color: string;
-  onChange: (color: string) => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const buttonRef = useRef<HTMLElement | null>(null);
-  return (
-    <>
-      <Button
-        onClick={() => setEditing(true)}
-        ref={buttonRef as any}
-        sx={{
-          backgroundColor: color,
-          color: getLuminance(color) > 0.5 ? '#000' : '#fff',
-        }}
-        variant="contained"
-      >
-        Edit
-      </Button>
-      <Popover
-        open={editing}
-        onClose={() => setEditing(false)}
-        anchorEl={buttonRef.current}
-      >
-        <SketchPicker color={color} onChange={(color) => onChange(color.hex)} />
-      </Popover>
-    </>
-  );
-}
 
 const Home: NextPage = () => {
   const [clock, setClock] = useState<OBSClockDefinition>();
-  const [durationStr, setDuration] = useState('');
   const [state, setState] = useState<ClockState>({ id: Date.now().toString() });
-  const [editingColor, setEditingColor] = useState(false);
-  const buttonRef = useRef<HTMLElement | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importValue, setImportValue] = useState('');
+  const [cssInfoOpen, setShowCssInfo] = useState(false);
 
   useEffect(() => {
-    const parsed = parseDuration(durationStr);
-    if (clock?.type === 'countdown' && clock.durationMs !== parsed) {
-      setClock({ ...clock, durationMs: parsed });
-    } else if (clock?.type === 'countup' && clock.startMs !== parsed) {
-      setClock({ ...clock, startMs: parsed });
+    try {
+      const url = new URL(importValue);
+      const config = url.searchParams.get('config');
+      if (!config) return;
+      const parsed = JSON.parse(config);
+      setClock(parsed);
+      setImporting(false);
+      setImportValue('');
+    } catch (e) {
+      // ignore
     }
-  }, [clock, durationStr]);
+  }, [importValue]);
 
   useEffect(() => {
     setState({ id: Date.now().toString() });
@@ -89,171 +58,29 @@ const Home: NextPage = () => {
     };
   };
 
-  let controls;
-
-  if (clock) {
-    controls = (
-      <>
-        <div style={{ marginTop: '12px' }}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'stretch',
-              rowGap: '1rem',
-              '& > div': {
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              },
-            }}
-          >
-            {clock.type === 'clock' && (
-              <div>
-                <FormLabel sx={{ flexGrow: 1 }}>Time Zone:</FormLabel>
-                <ButtonGroup variant="outlined">
-                  <Button
-                    variant={!clock.timeZone ? 'contained' : undefined}
-                    onClick={() => setClock({ ...clock, timeZone: null })}
-                  >
-                    Local Time
-                  </Button>
-                  <Button
-                    variant={clock.timeZone ? 'contained' : undefined}
-                    onClick={() =>
-                      setClock({
-                        ...clock,
-                        timeZone:
-                          Intl.DateTimeFormat().resolvedOptions().timeZone,
-                      })
-                    }
-                  >
-                    Specify
-                  </Button>
-                </ButtonGroup>
-              </div>
-            )}
-            {clock.type === 'clock' && clock.timeZone && (
-              <div>
-                <Autocomplete
-                  fullWidth
-                  options={
-                    (Intl as any).supportedValuesOf('timeZone') as string[]
-                  }
-                  defaultValue={
-                    Intl.DateTimeFormat().resolvedOptions().timeZone
-                  }
-                  onChange={(_, value) =>
-                    value && setClock({ ...clock, timeZone: value })
-                  }
-                  renderInput={(params) => (
-                    <TextField {...params} label="Time Zone" />
-                  )}
-                />
-              </div>
-            )}
-            {clock?.type === 'countdown' && (
-              <div>
-                <TextField
-                  fullWidth
-                  label="Duration"
-                  value={durationStr}
-                  onChange={(e) => setDuration(e.target.value)}
-                  placeholder="2h 49min 30s"
-                  inputProps={{
-                    inputMode: 'text',
-                  }}
-                />
-              </div>
-            )}
-            <div>
-              <FormLabel sx={{ flexGrow: 1 }}>Color</FormLabel>
-              <ColorEditorButton
-                color={clock.color ?? '#fff'}
-                onChange={(color) => setClock({ ...clock, color: color })}
-              />
-            </div>
-            {clock.type !== 'clock' && (
-              <div>
-                <FormLabel sx={{ flexGrow: 1 }}>Color When Paused</FormLabel>
-                <ColorEditorButton
-                  color={clock.colorOnPaused ?? '#fff'}
-                  onChange={(color) =>
-                    setClock({ ...clock, colorOnPaused: color })
-                  }
-                />
-              </div>
-            )}
-            {clock.type !== 'clock' && (
-              <div>
-                <FormLabel sx={{ flexGrow: 1 }}>Color When Stopped</FormLabel>
-                <ColorEditorButton
-                  color={clock.colorOnStopped ?? '#fff'}
-                  onChange={(color) =>
-                    setClock({ ...clock, colorOnStopped: color })
-                  }
-                />
-              </div>
-            )}
-            {clock.type === 'countdown' && clock.stopAtZero && (
-              <div>
-                <FormLabel sx={{ flexGrow: 1 }}>Color At Zero</FormLabel>
-                <ColorEditorButton
-                  color={clock.colorOnZero ?? '#fff'}
-                  onChange={(color) =>
-                    setClock({ ...clock, colorOnZero: color })
-                  }
-                />
-              </div>
-            )}
-            {clock.type === 'countdown' && !clock.stopAtZero && (
-              <div>
-                <FormLabel sx={{ flexGrow: 1 }}>Color When Negative</FormLabel>
-                <ColorEditorButton
-                  color={clock.colorOnNegative ?? '#fff'}
-                  onChange={(color) =>
-                    setClock({ ...clock, colorOnNegative: color })
-                  }
-                />
-              </div>
-            )}
-            {clock?.type === 'countdown' && (
-              <div>
-                <FormLabel sx={{ flexGrow: 1 }}>Stop at zero?</FormLabel>
-                <Checkbox
-                  checked={clock.stopAtZero ?? false}
-                  onChange={(_, checked) =>
-                    setClock({ ...clock, stopAtZero: checked })
-                  }
-                />
-              </div>
-            )}
-            <div>
-              <FormLabel sx={{ flexGrow: 1 }}>Blink Colons?</FormLabel>
-              <Checkbox
-                checked={clock.blinkColons ?? false}
-                onChange={(_, checked) =>
-                  setClock({ ...clock, blinkColons: checked })
-                }
-              />
-            </div>
-            <div>
-              <FormLabel sx={{ flexGrow: 1 }}>Show Milliseconds?</FormLabel>
-              <Checkbox
-                checked={clock.showMs ?? false}
-                onChange={(_, checked) =>
-                  setClock({ ...clock, showMs: checked })
-                }
-              />
-            </div>
-          </Box>
-        </div>
-      </>
-    );
-  }
-
   return (
     <div>
+      <Dialog open={importing} onClose={() => setImporting(false)}>
+        <DialogTitle>Import</DialogTitle>
+        <DialogContent>
+          <Typography gutterBottom>
+            Paste the link from OBS to edit its settings:
+          </Typography>
+          <TextField
+            fullWidth
+            value={importValue}
+            onChange={(e) => setImportValue(e.target.value)}
+            label="OBS Link"
+          />
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={cssInfoOpen}
+        onClose={() => setShowCssInfo(false)}
+        maxWidth="xs"
+      >
+        <CssDialogueContent />
+      </Dialog>
       <AppBar position="sticky">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -299,11 +126,30 @@ const Home: NextPage = () => {
               <Button {...hook({ type: 'clock' })} fullWidth>
                 Clock
               </Button>
-              <Button {...hook({ type: 'countup', startMs: 0 })} fullWidth>
-                Count-up
+              <Button
+                {...hook({
+                  type: 'stopwatch',
+                  startMs: 0,
+                  autoStart: true,
+                  resetAfter: 3600 * 1000,
+                })}
+                fullWidth
+              >
+                Stopwatch
               </Button>
-              <Button {...hook({ type: 'countdown', durationMs: 0 })} fullWidth>
-                Count-down
+              <Button
+                {...hook({
+                  type: 'timer',
+                  durationMs: 60 * 1000,
+                  autoStart: true,
+                  resetAfter: 3600 * 1000,
+                })}
+                fullWidth
+              >
+                Timer
+              </Button>
+              <Button sx={{ width: '40px' }} onClick={() => setImporting(true)}>
+                <Download fontSize="small" />
               </Button>
             </ButtonGroup>
             <Box
@@ -312,7 +158,7 @@ const Home: NextPage = () => {
                 width: '100%',
               }}
             >
-              {controls}
+              {clock && <Controls clock={clock} setClock={setClock} />}
             </Box>
             {clock && (
               <Box
@@ -340,6 +186,14 @@ const Home: NextPage = () => {
                         )}&config=${encodeURIComponent(JSON.stringify(clock))}`
                   }
                 />
+                <Tooltip title="CSS Info" arrow placement="top">
+                  <IconButton
+                    sx={{ marginLeft: '8px' }}
+                    onClick={() => setShowCssInfo(true)}
+                  >
+                    <Css />
+                  </IconButton>
+                </Tooltip>
               </Box>
             )}
           </Box>

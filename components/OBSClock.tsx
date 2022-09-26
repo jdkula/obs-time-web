@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { DateTime, Duration } from 'luxon';
-import { Fragment, useEffect, useState } from 'react';
+import { DateTime } from 'luxon';
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 import { durationToString } from '~/lib/util';
 import { Textfit } from 'react-textfit';
-import { Box, css, IconButton, NoSsr } from '@mui/material';
+import { css, IconButton, NoSsr } from '@mui/material';
 import { Pause, PlayArrow, Refresh } from '@mui/icons-material';
 import styles from '~/styles/Clock.module.css';
 
@@ -11,37 +11,47 @@ interface CommonOptions {
   showMs?: boolean;
   color?: string;
   blinkColons?: boolean;
+
+  autoResetStr?: string;
+  durationStr?: string;
 }
 
-interface Clock extends CommonOptions {
+interface CountOptions extends CommonOptions {
+  autoStart?: boolean;
+  resetAfter?: number | null;
+  colorOnPaused?: string;
+  colorOnStopped?: string;
+}
+
+export interface ClockDefinition extends CommonOptions {
   type: 'clock';
   timeZone?: string | null;
   format?: string;
 }
 
-interface CountUp extends CommonOptions {
-  type: 'countup';
+export interface StopwatchDefinition extends CountOptions {
+  type: 'stopwatch';
   startMs: number;
-  colorOnPaused?: string;
-  colorOnStopped?: string;
 }
 
-interface CountDown extends CommonOptions {
-  type: 'countdown';
+export interface TimerDefinition extends CountOptions {
+  type: 'timer';
   durationMs: number;
   stopAtZero?: boolean;
   colorOnNegative?: string;
   colorOnZero?: string;
-  colorOnPaused?: string;
-  colorOnStopped?: string;
 }
 
-export type OBSClockDefinition = Clock | CountUp | CountDown;
+export type OBSClockDefinition =
+  | ClockDefinition
+  | StopwatchDefinition
+  | TimerDefinition;
 
 export interface ClockState {
   id: string;
   startTime?: number;
   pauseTime?: number | null;
+  lastTouch?: number;
 }
 
 type ClockStatus = 'running' | 'zero' | 'negative' | 'paused' | 'stopped';
@@ -69,7 +79,7 @@ export function getClockInfo(
         status: 'running',
       };
     }
-    case 'countdown': {
+    case 'timer': {
       const start = state.startTime ?? Date.now();
       const end = state.startTime ? state.pauseTime ?? Date.now() : start;
       let stamp = start - end + clock.durationMs;
@@ -91,7 +101,7 @@ export function getClockInfo(
           : 'running',
       };
     }
-    case 'countup': {
+    case 'stopwatch': {
       const start = state.startTime ?? Date.now();
       const end = state.startTime ? state.pauseTime ?? Date.now() : start;
       return {
@@ -137,7 +147,7 @@ export function useClock(
 export interface OBSClockProps {
   clock: OBSClockDefinition;
   state: ClockState;
-  setState: (state: ClockState) => void;
+  setState: Dispatch<SetStateAction<ClockState>>;
   hideControls?: boolean;
 }
 
@@ -168,7 +178,7 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
       : ''}
       
       ${(props) =>
-    props.clock.type === 'countdown' && props.clock.colorOnZero
+    props.clock.type === 'timer' && props.clock.colorOnZero
       ? css`
           &.clock-status-zero {
             color: ${props.clock.colorOnZero};
@@ -177,7 +187,7 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
       : ''}
       
       ${(props) =>
-    props.clock.type === 'countdown' && props.clock.colorOnNegative
+    props.clock.type === 'timer' && props.clock.colorOnNegative
       ? css`
           &.clock-status-negative {
             color: ${props.clock.colorOnNegative};
@@ -204,6 +214,34 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
 export function OBSClock({ clock, state, setState }: OBSClockProps) {
   const { text, hideColons, status } = useClock(clock, state);
   const colonClass = 'colon' + (hideColons ? ' colon-hidden' : '');
+
+  useEffect(() => {
+    if (clock.type === 'clock') return;
+
+    if (
+      clock.resetAfter &&
+      state.lastTouch &&
+      Date.now() - state.lastTouch > clock.resetAfter
+    ) {
+      setState({ id: state.id, lastTouch: Date.now() });
+      return;
+    }
+
+    if (clock.autoStart && !state.startTime) {
+      setState({ id: state.id, lastTouch: Date.now(), startTime: Date.now() });
+    }
+  }, [clock, state, setState]);
+
+  useEffect(() => {
+    const handle = setInterval(() => {
+      setState((state: ClockState) => ({ ...state, lastTouch: Date.now() }));
+    }, 1000);
+
+    return () => {
+      clearInterval(handle);
+    };
+  }, [setState]);
+
   return (
     <NoSsr>
       <ClockStyle
@@ -238,7 +276,7 @@ export function OBSClock({ clock, state, setState }: OBSClockProps) {
                 )
               }
             >
-              {state.startTime ? <Pause /> : <PlayArrow />}
+              {!state.pauseTime ? <Pause /> : <PlayArrow />}
             </IconButton>
             <IconButton
               color="inherit"
