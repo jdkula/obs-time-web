@@ -149,10 +149,9 @@ export default function Home() {
                   ...clock,
                   type: 'stopwatch',
                   startMs: 0,
-                  autoStart: true,
                   resetAfter:
                     (clock?.type !== 'clock' && clock?.resetAfter) ||
-                    3600 * 1000,
+                    15 * 60 * 1000,
                 } as OBSClockDefinition)}
                 fullWidth
               >
@@ -164,10 +163,9 @@ export default function Home() {
                   type: 'timer',
                   durationMs:
                     (clock?.type === 'timer' && clock.durationMs) || 60 * 1000,
-                  autoStart: true,
                   resetAfter:
                     (clock?.type !== 'clock' && clock?.resetAfter) ||
-                    3600 * 1000,
+                    15 * 60 * 1000,
                 } as OBSClockDefinition)}
                 fullWidth
               >

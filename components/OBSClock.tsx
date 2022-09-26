@@ -25,7 +25,7 @@ interface CommonOptions {
 
 interface CountOptions extends CommonOptions {
   autoStart?: boolean;
-  resetAfter?: number | null;
+  resetAfter?: number;
   colorOnPaused?: string;
   colorOnStopped?: string;
 }
@@ -56,7 +56,7 @@ export type OBSClockDefinition =
 
 export interface ClockState {
   id: string;
-  startTime?: number;
+  startTime?: number | null;
   pauseTime?: number | null;
   lastTouch?: number;
 }
@@ -232,15 +232,15 @@ export function OBSClock({ clock, state, setState }: OBSClockProps) {
     if (clock.type === 'clock') return;
 
     if (
-      clock.resetAfter &&
+      clock.resetAfter !== undefined &&
       state.lastTouch &&
-      Date.now() - state.lastTouch > clock.resetAfter
+      Date.now() - state.lastTouch > Math.max(2000, clock.resetAfter)
     ) {
       setState({ id: state.id, lastTouch: Date.now() });
       return;
     }
 
-    if (clock.autoStart && !state.startTime) {
+    if (clock.autoStart && state.startTime === undefined) {
       setState({ id: state.id, lastTouch: Date.now(), startTime: Date.now() });
     }
   }, [clock, state, setState]);
@@ -289,11 +289,11 @@ export function OBSClock({ clock, state, setState }: OBSClockProps) {
                 )
               }
             >
-              {!state.pauseTime ? <Pause /> : <PlayArrow />}
+              {state.pauseTime || !state.startTime ? <PlayArrow /> : <Pause />}
             </IconButton>
             <IconButton
               color="inherit"
-              onClick={() => setState({ id: state.id })}
+              onClick={() => setState({ id: state.id, startTime: null })}
             >
               <Refresh />
             </IconButton>

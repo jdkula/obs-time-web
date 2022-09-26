@@ -1,3 +1,4 @@
+import { Settings } from '@mui/icons-material';
 import {
   Button,
   ButtonGroup,
@@ -11,8 +12,17 @@ import { ControlComponent } from '.';
 import { TimerDefinition, StopwatchDefinition } from '../OBSClock';
 
 export const RestartModeControl: ControlComponent<
-  StopwatchDefinition | TimerDefinition
-> = ({ clock, setClock }) => (
+  StopwatchDefinition | TimerDefinition,
+  {
+    showResetAfterControls?: boolean;
+    setShowResetAfterControls?: (show: boolean) => void;
+  }
+> = ({
+  clock,
+  setClock,
+  showResetAfterControls,
+  setShowResetAfterControls,
+}) => (
   <div>
     <Tooltip title="When the webpage isn't loaded, reset after this time.">
       <FormLabel sx={{ flexGrow: 1 }}>Restart Mode:</FormLabel>
@@ -31,11 +41,26 @@ export const RestartModeControl: ControlComponent<
           onClick={() =>
             setClock({
               ...clock,
-              resetAfter: null,
+              resetAfter: clock.autoResetStr
+                ? parseDuration(clock.autoResetStr)
+                : 15 * 60 * 1000,
             })
           }
         >
           Automatic
+        </Button>
+        <Button
+          size="small"
+          disabled={clock.resetAfter === undefined}
+          variant={
+            showResetAfterControls && clock.resetAfter !== undefined
+              ? 'contained'
+              : 'outlined'
+          }
+          sx={{ width: '40px' }}
+          onClick={() => setShowResetAfterControls?.(!showResetAfterControls)}
+        >
+          <Settings />
         </Button>
       </ButtonGroup>
     </Tooltip>
@@ -46,7 +71,7 @@ export const RestartModeConfigure: ControlComponent<
   StopwatchDefinition | TimerDefinition
 > = ({ clock, setClock }) => {
   const [restartStr, setRestartTimeout] = useState(
-    clock.autoResetStr ?? '1hour'
+    clock.autoResetStr ?? '15min'
   );
 
   useEffect(() => {
@@ -70,7 +95,7 @@ export const RestartModeConfigure: ControlComponent<
         label="Automatically Reset After"
         value={restartStr}
         onChange={(e) => setFullRestartTimeout(e.target.value)}
-        placeholder="2h 49min 30s"
+        placeholder="15min"
         helperText="When the webpage isn't loaded, restart after this time."
         inputProps={{
           inputMode: 'text',

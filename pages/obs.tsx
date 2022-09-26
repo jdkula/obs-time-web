@@ -12,7 +12,11 @@ const ObsViewImpl = ({
 }) => {
   const config = JSON.parse(decodeURIComponent(configStr));
   const id = decodeURIComponent(idStr);
-  const [state, setState] = useLocalStorage<ClockState>(`CLOCK_${id}`, { id });
+  const [state, setState] = useLocalStorage<ClockState>(
+    `CLOCK_${id}`,
+    { id },
+    1000
+  );
   return <OBSClock clock={config} state={state} setState={setState} />;
 };
 
