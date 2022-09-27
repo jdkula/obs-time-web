@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Collapse,
   FormLabel,
   Popover,
   Slider,
@@ -28,7 +29,7 @@ function makeColorControl<T extends OBSClockDefinition = OBSClockDefinition>(
     return (
       <div>
         <FormLabel sx={{ flexGrow: 1 }}>{label}</FormLabel>
-        {!!clock[key] && (
+        {(!!clock[key] || !!clock[outlineKey]) && (
           <Button
             onClick={() =>
               setClock({
@@ -71,9 +72,13 @@ function makeColorControl<T extends OBSClockDefinition = OBSClockDefinition>(
             orientation="vertical"
             value={(clock[outlineWidthKey] as number) ?? 1}
             min={0}
-            max={10}
+            max={20}
             onChange={(_, value) =>
-              setClock({ ...clock, [outlineWidthKey]: value as number })
+              setClock({
+                ...clock,
+                [outlineWidthKey]: value as number,
+                [outlineKey]: clock[outlineKey] ?? '#888',
+              })
             }
             sx={{
               minHeight: '80px',

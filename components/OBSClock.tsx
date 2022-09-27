@@ -168,27 +168,52 @@ export interface OBSClockProps {
   hideControls?: boolean;
 }
 
+function textCss<T extends OBSClockDefinition>(
+  clock: T,
+  colorKey: keyof T,
+  outlineKey: keyof T,
+  widthKey: keyof T
+) {
+  let [color, outline, width] = [
+    clock[colorKey] as string,
+    clock[outlineKey] as string,
+    clock[widthKey] as number,
+  ];
+  let out = '';
+  if (color) {
+    out += `color: ${color};\n`;
+  }
+  if (outline) {
+    width = (width ?? 1) as number;
+    const strokeCss = `${width}px ${outline}`;
+    out += `
+      @supports (text-stroke: ${strokeCss}) or
+        (-webkit-text-stroke: ${strokeCss}) {
+        text-stroke: ${strokeCss};
+        -webkit-text-stroke: ${strokeCss};
+      }
+
+      @supports not (
+        (text-stroke: ${strokeCss}) or (-webkit-text-stroke: ${strokeCss})
+      ) {
+        text-shadow: -${width}px ${width}px 0 ${outline},
+          ${width}px ${width}px 0 ${outline},
+          ${width}px -${width}px 0 ${outline},
+          -${width}px -${width}px 0 ${outline};
+      }
+    `;
+  }
+
+  return out;
+}
+
 export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: ${(props) => props.clock.color ?? 'inherit'};
-  ${(props) =>
-    props.clock.outline
-      ? css`
-          text-shadow: -${props.clock.outlineWidth ?? 1}px ${props.clock
-                .outlineWidth ?? 1}px 0 ${props.clock.outline},
-            ${props.clock.outlineWidth ?? 1}px
-              ${props.clock.outlineWidth ?? 1}px 0 ${props.clock.outline},
-            ${props.clock.outlineWidth ?? 1}px -${props.clock.outlineWidth ??
-              1}px 0 ${props.clock.outline},
-            -${props.clock.outlineWidth ?? 1}px -${props.clock.outlineWidth ??
-              1}px
-              0 ${props.clock.outline};
-        `
-      : ''}
+  ${({ clock }) => textCss(clock, 'color', 'outline', 'outlineWidth')}
 
   font-family: ${(props) => props.clock.font.family || 'inherit'};
   font-weight: ${(props) => (props.clock.font.bold ? '700' : 'normal')};
@@ -197,102 +222,45 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
     props.clock.font?.underline ? 'underline' : 'none'};
 
   &.clock-status-paused {
-    ${(props) =>
-      props.clock.type !== 'clock' && props.clock.colorOnPaused
-        ? css`
-            color: ${props.clock.colorOnPaused};
-          `
-        : ''}
-
-    ${(props) =>
-      props.clock.type !== 'clock' && props.clock.outlineOnPaused
-        ? css`
-            text-shadow: -${props.clock.outlineWidthOnPaused ?? 1}px ${props
-                  .clock.outlineWidthOnPaused ?? 1}px 0 ${props.clock.outlineOnPaused},
-              ${props.clock.outlineWidthOnPaused ?? 1}px
-                ${props.clock.outlineWidthOnPaused ?? 1}px 0
-                ${props.clock.outlineOnPaused},
-              ${props.clock.outlineWidthOnPaused ?? 1}px -${props.clock
-                  .outlineWidthOnPaused ?? 1}px 0 ${props.clock.outlineOnPaused},
-              -${props.clock.outlineWidthOnPaused ?? 1}px -${props.clock
-                  .outlineWidthOnPaused ?? 1}px
-                0 ${props.clock.outlineOnPaused};
-          `
+    ${({ clock }) =>
+      clock.type !== 'clock'
+        ? textCss(
+            clock,
+            'colorOnPaused',
+            'outlineOnPaused',
+            'outlineWidthOnPaused'
+          )
         : ''}
   }
 
   &.clock-status-stopped {
-    ${(props) =>
-      props.clock.type !== 'clock' && props.clock.colorOnStopped
-        ? css`
-            color: ${props.clock.colorOnStopped};
-          `
-        : ''}
-
-    ${(props) =>
-      props.clock.type !== 'clock' && props.clock.outlineOnStopped
-        ? css`
-            text-shadow: -${props.clock.outlineWidthOnStopped ?? 1}px ${props
-                  .clock.outlineWidthOnStopped ?? 1}px 0 ${props.clock.outlineOnStopped},
-              ${props.clock.outlineWidthOnStopped ?? 1}px
-                ${props.clock.outlineWidthOnStopped ?? 1}px 0
-                ${props.clock.outlineOnStopped},
-              ${props.clock.outlineWidthOnStopped ?? 1}px -${props.clock
-                  .outlineWidthOnStopped ?? 1}px 0 ${props.clock.outlineOnStopped},
-              -${props.clock.outlineWidthOnStopped ?? 1}px -${props.clock
-                  .outlineWidthOnStopped ?? 1}px
-                0 ${props.clock.outlineOnStopped};
-          `
+    ${({ clock }) =>
+      clock.type !== 'clock'
+        ? textCss(
+            clock,
+            'colorOnStopped',
+            'outlineOnStopped',
+            'outlineWidthOnStopped'
+          )
         : ''}
   }
 
   &.clock-status-zero {
-    ${(props) =>
-      props.clock.type === 'timer' && props.clock.colorOnZero
-        ? css`
-            color: ${props.clock.colorOnZero};
-          `
-        : ''}
-
-    ${(props) =>
-      props.clock.type === 'timer' && props.clock.outlineOnZero
-        ? css`
-            text-shadow: -${props.clock.outlineWidthOnZero ?? 1}px ${props.clock
-                  .outlineWidthOnZero ?? 1}px 0 ${props.clock.outlineOnZero},
-              ${props.clock.outlineWidthOnZero ?? 1}px
-                ${props.clock.outlineWidthOnZero ?? 1}px 0
-                ${props.clock.outlineOnZero},
-              ${props.clock.outlineWidthOnZero ?? 1}px -${props.clock
-                  .outlineWidthOnZero ?? 1}px 0 ${props.clock.outlineOnZero},
-              -${props.clock.outlineWidthOnZero ?? 1}px -${props.clock
-                  .outlineWidthOnZero ?? 1}px
-                0 ${props.clock.outlineOnZero};
-          `
+    ${({ clock }) =>
+      clock.type === 'timer'
+        ? textCss(clock, 'colorOnZero', 'outlineOnZero', 'outlineWidthOnZero')
         : ''}
   }
 
   &.clock-status-negative {
-    ${(props) =>
-      props.clock.type === 'timer' && props.clock.colorOnNegative
-        ? css`
-            color: ${props.clock.colorOnNegative};
-          `
-        : ''}
-
-    ${(props) =>
-      props.clock.type === 'timer' && props.clock.outlineOnNegative
-        ? css`
-            text-shadow: -${props.clock.outlineOnNegative ?? 1}px ${props.clock
-                  .outlineOnNegative ?? 1}px 0 ${props.clock.outlineOnNegative},
-              ${props.clock.outlineOnNegative ?? 1}px
-                ${props.clock.outlineOnNegative ?? 1}px 0
-                ${props.clock.outlineOnNegative},
-              ${props.clock.outlineOnNegative ?? 1}px -${props.clock
-                  .outlineOnNegative ?? 1}px 0 ${props.clock.outlineOnNegative},
-              -${props.clock.outlineOnNegative ?? 1}px -${props.clock
-                  .outlineOnNegative ?? 1}px
-                0 ${props.clock.outlineOnNegative};
-          `
+    ${({ clock }) =>
+      clock.type === 'timer'
+        ? textCss(
+            clock,
+            'colorOnNegative',
+            'outlineOnNegative',
+            'outlineWidthOnNegative'
+          )
         : ''}
   }
 
