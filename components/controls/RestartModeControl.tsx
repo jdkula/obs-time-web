@@ -43,7 +43,7 @@ export const RestartModeControl: ControlComponent<
               ...clock,
               resetAfter: clock.autoResetStr
                 ? parseDuration(clock.autoResetStr)
-                : 15 * 60 * 1000,
+                : 60 * 60 * 1000,
             })
           }
         >
@@ -70,9 +70,7 @@ export const RestartModeControl: ControlComponent<
 export const RestartModeConfigure: ControlComponent<
   StopwatchDefinition | TimerDefinition
 > = ({ clock, setClock }) => {
-  const [restartStr, setRestartTimeout] = useState(
-    clock.autoResetStr ?? '15min'
-  );
+  const [restartStr, setRestartTimeout] = useState(clock.autoResetStr ?? '1h');
 
   useEffect(() => {
     if (clock.autoResetStr) {
@@ -95,7 +93,7 @@ export const RestartModeConfigure: ControlComponent<
         label="Automatically Reset After"
         value={restartStr}
         onChange={(e) => setFullRestartTimeout(e.target.value)}
-        placeholder="15min"
+        placeholder="1h"
         helperText="When the webpage isn't loaded, restart after this time."
         inputProps={{
           inputMode: 'text',

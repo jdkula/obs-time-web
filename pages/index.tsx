@@ -151,7 +151,7 @@ export default function Home() {
                   startMs: 0,
                   resetAfter:
                     (clock?.type !== 'clock' && clock?.resetAfter) ||
-                    15 * 60 * 1000,
+                    60 * 60 * 1000,
                 } as OBSClockDefinition)}
                 fullWidth
               >
@@ -165,7 +165,7 @@ export default function Home() {
                     (clock?.type === 'timer' && clock.durationMs) || 60 * 1000,
                   resetAfter:
                     (clock?.type !== 'clock' && clock?.resetAfter) ||
-                    15 * 60 * 1000,
+                    60 * 60 * 1000,
                 } as OBSClockDefinition)}
                 fullWidth
               >
