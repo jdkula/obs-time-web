@@ -1,15 +1,15 @@
 const indexStyles = {
   controlsFrame: {
     display: 'flex',
-    flexDirection: { xs: 'column', md: 'row' },
-    justifyContent: { xs: 'stretch', md: 'space-around' },
+    flexDirection: { xs: 'column', lg: 'row' },
+    justifyContent: { xs: 'stretch', lg: 'space-around' },
     margin: '2rem',
     '& > div': {
       padding: '2rem',
       border: '1px solid gray',
       flexGrow: 1,
       width: {
-        md: '2%',
+        lg: '2%',
       },
     },
   },
@@ -34,6 +34,11 @@ const indexStyles = {
       'linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%)',
     backgroundSize: '20px 20px',
     backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+    '& iframe': {
+      border: 0,
+      width: '100%',
+      height: '100%',
+    },
   },
 };
 

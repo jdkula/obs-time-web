@@ -92,7 +92,8 @@ export function getClockInfo(
               fractionalSecondDigits: clock.showMs ? 2 : undefined,
             }),
         hideColons:
-          (clock.blinkColons && Math.floor(dt.toSeconds()) % 2 === 1) ?? false,
+          (clock.blinkColons && Math.floor(dt.toMillis() / 500) % 2 === 1) ??
+          false,
         status: 'running',
       };
     }
@@ -105,7 +106,7 @@ export function getClockInfo(
         text: durationToString(stamp, clock.showMs ?? false),
         hideColons:
           (clock.blinkColons &&
-            Math.floor(Math.abs(start - end) / 1000) % 2 === 1) ??
+            Math.floor(Math.abs(start - end) / 500) % 2 === 1) ??
           false,
         status: !state.startTime
           ? 'stopped'
@@ -125,7 +126,7 @@ export function getClockInfo(
         text: durationToString(end - start, clock.showMs ?? false),
         hideColons:
           (clock.blinkColons &&
-            Math.floor(Math.abs(start - end) / 1000) % 2 === 1) ??
+            Math.floor(Math.abs(start - end) / 500) % 2 === 1) ??
           false,
         status: !state.startTime
           ? 'stopped'
@@ -166,6 +167,7 @@ export interface OBSClockProps {
   state: ClockState;
   setState: Dispatch<SetStateAction<ClockState>>;
   hideControls?: boolean;
+  fontSize?: string;
 }
 
 function textCss<T extends OBSClockDefinition>(
@@ -211,6 +213,7 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
   ${({ clock }) => textCss(clock, 'color', 'outline', 'outlineWidth')}
@@ -270,7 +273,6 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   }
 
   & > div:not(${styles.controls}) {
-    width: 100%;
     max-height: calc(100%-40px);
     overflow: hidden;
   }
@@ -285,7 +287,7 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   }
 `;
 
-export function OBSClock({ clock, state, setState }: OBSClockProps) {
+export function OBSClock({ clock, state, setState, fontSize }: OBSClockProps) {
   const { text, hideColons, status } = useClock(clock, state);
   const colonClass = 'colon' + (hideColons ? ' colon-hidden' : '');
 
@@ -323,14 +325,19 @@ export function OBSClock({ clock, state, setState }: OBSClockProps) {
         state={state}
         className={`clock clock-${clock.type} clock-status-${status}`}
       >
-        <Textfit mode="single" forceSingleModeWidth max={10000}>
+        <div
+          style={{
+            fontSize: fontSize ?? `calc(150vmin / ${text.length})`,
+            whiteSpace: 'nowrap',
+          }}
+        >
           {text.split(':').map((s, idx, arr) => (
             <Fragment key={idx}>
               <span className="number">{s}</span>
               {idx !== arr.length - 1 && <span className={colonClass}>:</span>}
             </Fragment>
           ))}
-        </Textfit>
+        </div>
         {clock.type !== 'clock' && (
           <div className={styles.controls}>
             <IconButton

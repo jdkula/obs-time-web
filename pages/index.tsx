@@ -232,7 +232,12 @@ export default function Home() {
             <Box sx={{ flexGrow: 1, alignSelf: 'stretch' }}>
               <Box sx={styles.previewContainer}>
                 {clock && (
-                  <OBSClock clock={clock} state={state} setState={setState} />
+                  <OBSClock
+                    clock={clock}
+                    state={state}
+                    setState={setState}
+                    fontSize="3rem"
+                  />
                 )}
               </Box>
             </Box>
