@@ -54,19 +54,19 @@ export default function Home() {
     try {
       const url = new URL(importValue);
       const config = url.searchParams.get('config');
+      const id = url.searchParams.get('id');
       if (!config) return;
       const parsed = JSON.parse(config);
       setClock(parsed);
+      if (id) {
+        setState({ id });
+      }
       setImporting(false);
       setImportValue('');
     } catch (e) {
       // ignore
     }
   }, [importValue]);
-
-  useEffect(() => {
-    setState({ id: Date.now().toString() });
-  }, [clock?.type]);
 
   const hook = (
     defaultClock: Omit<OBSClockDefinition, 'font'> &
