@@ -3,15 +3,9 @@ import {
   FormatItalic,
   FormatUnderlined,
 } from '@mui/icons-material';
-import {
-  Autocomplete,
-  Button,
-  ButtonGroup,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, Button, ButtonGroup, TextField } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ControlComponent } from '.';
 
 const kIncludedFonts = [

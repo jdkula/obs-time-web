@@ -213,7 +213,6 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   width: 100%;
   height: 100%;
   ${({ clock }) => textCss(clock, 'color', 'outline', 'outlineWidth')}
@@ -275,6 +274,8 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   & > div:not(${styles.controls}) {
     max-height: calc(100%-40px);
     overflow: hidden;
+    width: 100%;
+    text-align: center;
   }
 
   & > div.${styles.controls} {
