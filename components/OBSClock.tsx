@@ -221,6 +221,11 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
   text-decoration: ${(props) =>
     props.clock.font?.underline ? 'underline' : 'none'};
 
+  & .colon {
+    position: relative;
+    top: -0.05em;
+  }
+
   &.clock-status-paused {
     ${({ clock }) =>
       clock.type !== 'clock'
