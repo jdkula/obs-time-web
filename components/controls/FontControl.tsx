@@ -1,12 +1,25 @@
 import {
+  FormatAlignCenter,
+  FormatAlignJustify,
+  FormatAlignLeft,
+  FormatAlignRight,
   FormatBold,
   FormatItalic,
+  FormatSize,
   FormatUnderlined,
 } from '@mui/icons-material';
-import { Autocomplete, Button, ButtonGroup, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Button,
+  ButtonGroup,
+  Popover,
+  Slider,
+  TextField,
+} from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ControlComponent } from '.';
+import { OBSClockDefinition } from '../OBSClock';
 
 const kIncludedFonts = [
   'Roboto',
@@ -172,8 +185,26 @@ function useFonts(): string[] {
   return fonts;
 }
 
+const FormatAlignButton = ({
+  formatAlign,
+}: {
+  formatAlign: OBSClockDefinition['font']['alignment'];
+}) => {
+  if (formatAlign === 'left') return <FormatAlignLeft fontSize="small" />;
+  if (formatAlign === 'center') return <FormatAlignCenter fontSize="small" />;
+  if (formatAlign === 'right') return <FormatAlignRight fontSize="small" />;
+  if (formatAlign === 'justify') return <FormatAlignJustify fontSize="small" />;
+
+  throw new Error('Invalid format alignment ' + formatAlign);
+};
+
 export const FontControl: ControlComponent = ({ clock, setClock }) => {
   const fonts = useFonts();
+  const alignButtonRef = useRef<any>();
+  const sizeButtonRef = useRef<any>();
+
+  const [alignOpen, setAlignOpen] = useState(false);
+  const [sizeOpen, setSizeOpen] = useState(false);
 
   return (
     <div>
@@ -230,7 +261,122 @@ export const FontControl: ControlComponent = ({ clock, setClock }) => {
         >
           <FormatUnderlined />
         </Button>
+        <Button
+          sx={{ width: '40px' }}
+          ref={sizeButtonRef}
+          size="small"
+          onClick={() => setSizeOpen(true)}
+        >
+          <FormatSize fontSize="small" />
+        </Button>
+        <Button
+          sx={{ width: '40px' }}
+          size="small"
+          ref={alignButtonRef}
+          onClick={() => setAlignOpen(true)}
+        >
+          <FormatAlignButton formatAlign={clock.font.alignment} />
+        </Button>
       </ButtonGroup>
+      <Popover
+        open={sizeOpen}
+        onClose={() => setSizeOpen(false)}
+        anchorEl={sizeButtonRef.current}
+      >
+        <Slider
+          orientation="vertical"
+          value={clock.font.sizeMultiplier}
+          min={0}
+          max={3}
+          step={null}
+          marks={[
+            { value: 0, label: '0.2×' },
+            { value: 0.5, label: '0.5×' },
+            { value: 1, label: 'Default' },
+            { value: 1.5 },
+            { value: 2, label: '2×' },
+            { value: 2.5 },
+            { value: 3, label: '3×' },
+          ]}
+          onChange={(_, value) =>
+            setClock({
+              ...clock,
+              font: {
+                ...clock.font,
+                sizeMultiplier: (value || 0.2) as number,
+              },
+            })
+          }
+          sx={{
+            minHeight: '100px',
+            minWidth: '20px',
+            marginTop: '20px',
+            marginBottom: '20px',
+          }}
+        />
+      </Popover>
+      <Popover
+        open={alignOpen}
+        onClose={() => setAlignOpen(false)}
+        anchorEl={alignButtonRef.current}
+      >
+        <ButtonGroup variant="outlined">
+          <Button
+            sx={{ width: '40px' }}
+            variant={clock.font.alignment === 'left' ? 'contained' : 'outlined'}
+            onClick={() =>
+              setClock({
+                ...clock,
+                font: { ...clock.font, alignment: 'left' },
+              })
+            }
+          >
+            <FormatAlignLeft />
+          </Button>
+          <Button
+            sx={{ width: '40px' }}
+            variant={
+              clock.font.alignment === 'center' ? 'contained' : 'outlined'
+            }
+            onClick={() =>
+              setClock({
+                ...clock,
+                font: { ...clock.font, alignment: 'center' },
+              })
+            }
+          >
+            <FormatAlignCenter />
+          </Button>
+          <Button
+            sx={{ width: '40px' }}
+            variant={
+              clock.font.alignment === 'right' ? 'contained' : 'outlined'
+            }
+            onClick={() =>
+              setClock({
+                ...clock,
+                font: { ...clock.font, alignment: 'right' },
+              })
+            }
+          >
+            <FormatAlignRight />
+          </Button>
+          <Button
+            sx={{ width: '40px' }}
+            variant={
+              clock.font.alignment === 'justify' ? 'contained' : 'outlined'
+            }
+            onClick={() =>
+              setClock({
+                ...clock,
+                font: { ...clock.font, alignment: 'justify' },
+              })
+            }
+          >
+            <FormatAlignJustify />
+          </Button>
+        </ButtonGroup>
+      </Popover>
     </div>
   );
 };

@@ -81,6 +81,8 @@ export default function Home() {
             bold: false,
             italic: false,
             underline: false,
+            alignment: 'left',
+            sizeMultiplier: 1,
           },
         } as OBSClockDefinition),
       variant:
@@ -188,7 +190,12 @@ export default function Home() {
                 <FormLabel sx={{ marginRight: '0.5rem' }}>
                   URL for OBS:
                 </FormLabel>
-                <TextField sx={{ flexGrow: 1 }} size="small" value={obsLink} />
+                <TextField
+                  sx={{ flexGrow: 1 }}
+                  size="small"
+                  value={obsLink}
+                  helperText="Use a height of 200px when creating your browser source"
+                />
                 <Tooltip
                   title={!copied ? 'Copy link' : 'Copied!'}
                   enterDelay={0}
@@ -232,12 +239,7 @@ export default function Home() {
             <Box sx={{ flexGrow: 1, alignSelf: 'stretch' }}>
               <Box sx={styles.previewContainer}>
                 {clock && (
-                  <OBSClock
-                    clock={clock}
-                    state={state}
-                    setState={setState}
-                    fontSize="3rem"
-                  />
+                  <OBSClock clock={clock} state={state} setState={setState} />
                 )}
               </Box>
             </Box>

@@ -1,16 +1,13 @@
 const indexStyles = {
   controlsFrame: {
     display: 'flex',
-    flexDirection: { xs: 'column', lg: 'row' },
-    justifyContent: { xs: 'stretch', lg: 'space-around' },
+    flexDirection: 'column',
+    justifyContent: 'stretch',
     margin: '2rem',
     '& > div': {
       padding: '2rem',
       border: '1px solid gray',
       flexGrow: 1,
-      width: {
-        lg: '2%',
-      },
     },
   },
   controlsContainer: {
@@ -26,7 +23,7 @@ const indexStyles = {
     marginTop: '1rem',
   },
   previewContainer: {
-    height: '100%',
+    height: '200px',
     width: '100%',
     border: '1px solid #333',
     background: 'black',

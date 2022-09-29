@@ -13,7 +13,7 @@ export const CssDialogueContent = () => (
       <Paper>
         <code>
           {[
-            ['.clock', 'General clock style'],
+            ['.clock', 'Clock container'],
             ['.clock-stopped', 'Before the clock is initially started'],
             ['.clock-running', 'Clock has started'],
             ['.clock-paused', 'Clock was running but is paused'],
@@ -25,6 +25,8 @@ export const CssDialogueContent = () => (
               '.clock-negative',
               'Timer mode with stop at zero disabled: timer has elapsed',
             ],
+            ['.text', 'Style for all text'],
+            ['.number', 'Style for numbers and AM/PM/time zones/etc'],
             ['.colon', 'Colon style'],
             ['.colon-hidden', 'Applied to colons when they should be hidden'],
           ].map(([cls, desc], i, arr) => (

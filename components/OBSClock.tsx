@@ -19,6 +19,8 @@ interface CommonOptions {
     bold: boolean;
     italic: boolean;
     underline: boolean;
+    alignment: 'left' | 'center' | 'right' | 'justify';
+    sizeMultiplier: number;
   };
 
   autoResetStr?: string;
@@ -209,7 +211,9 @@ function textCss<T extends OBSClockDefinition>(
   return out;
 }
 
-export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
+export const ClockStyle = styled.div<
+  Omit<OBSClockProps, 'setState'> & { fontSize: string }
+>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -271,11 +275,15 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
         : ''}
   }
 
-  & > div:not(${styles.controls}) {
+  & > :where(div:not(${styles.controls})) {
     max-height: calc(100%-40px);
     overflow: hidden;
     width: 100%;
-    text-align: center;
+    text-align: ${({ clock }) => clock.font.alignment};
+    font-size: calc(
+      ${({ fontSize }) => fontSize} *
+        ${({ clock }) => clock.font.sizeMultiplier}
+    );
   }
 
   & > div.${styles.controls} {
@@ -290,7 +298,7 @@ export const ClockStyle = styled.div<Omit<OBSClockProps, 'setState'>>`
 
 export function OBSClock({ clock, state, setState, fontSize }: OBSClockProps) {
   const { text, hideColons, status } = useClock(clock, state);
-  const colonClass = 'colon' + (hideColons ? ' colon-hidden' : '');
+  const colonClass = 'text colon' + (hideColons ? ' colon-hidden' : '');
 
   useEffect(() => {
     if (clock.type === 'clock') return;
@@ -324,17 +332,13 @@ export function OBSClock({ clock, state, setState, fontSize }: OBSClockProps) {
       <ClockStyle
         clock={clock}
         state={state}
+        fontSize={fontSize ?? `160px`}
         className={`clock clock-${clock.type} clock-status-${status}`}
       >
-        <div
-          style={{
-            fontSize: fontSize ?? `calc(150vmin / ${text.length})`,
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <div>
           {text.split(':').map((s, idx, arr) => (
             <Fragment key={idx}>
-              <span className="number">{s}</span>
+              <span className="number text">{s}</span>
               {idx !== arr.length - 1 && <span className={colonClass}>:</span>}
             </Fragment>
           ))}

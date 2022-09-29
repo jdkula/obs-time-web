@@ -67,12 +67,14 @@ function makeColorControl<T extends OBSClockDefinition = OBSClockDefinition>(
           open={showWidth}
           onClose={() => setShowWidth(false)}
           anchorEl={outlineRef.current}
+          transformOrigin={{ horizontal: 'center', vertical: 'top' }}
         >
           <Slider
             orientation="vertical"
             value={(clock[outlineWidthKey] as number) ?? 1}
             min={0}
             max={20}
+            valueLabelDisplay="on"
             onChange={(_, value) =>
               setClock({
                 ...clock,
@@ -85,6 +87,7 @@ function makeColorControl<T extends OBSClockDefinition = OBSClockDefinition>(
               minWidth: '20px',
               marginTop: '20px',
               marginBottom: '20px',
+              marginLeft: '30px',
             }}
           />
         </Popover>
