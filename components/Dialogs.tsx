@@ -25,6 +25,7 @@ export const CssDialogueContent = () => (
               '.clock-negative',
               'Timer mode with stop at zero disabled: timer has elapsed',
             ],
+            ['.colon', 'Colon style'],
             ['.colon-hidden', 'Applied to colons when they should be hidden'],
           ].map(([cls, desc], i, arr) => (
             <div
