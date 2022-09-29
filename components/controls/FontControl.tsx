@@ -261,14 +261,14 @@ export const FontControl: ControlComponent = ({ clock, setClock }) => {
         >
           <FormatUnderlined />
         </Button>
-        <Button
+        {/* <Button
           sx={{ width: '40px' }}
           ref={sizeButtonRef}
           size="small"
           onClick={() => setSizeOpen(true)}
         >
           <FormatSize fontSize="small" />
-        </Button>
+        </Button> */}
         <Button
           sx={{ width: '40px' }}
           size="small"
