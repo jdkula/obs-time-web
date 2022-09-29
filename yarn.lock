@@ -204,10 +204,70 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
+"@fontsource/bungee@^4.5.8":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/bungee/-/bungee-4.5.8.tgz#a76f2cb81f99356ed70a848255dbff4d5a4f668c"
+  integrity sha512-oZub0MXukCT94I6rYLFG9EnN80pwpIS1cFj1kh4RGVGBOeinfWQDgbmF59lOcL9byPiECvTxIovRDwgwSTfm1A==
+
+"@fontsource/fira-sans@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/fira-sans/-/fira-sans-4.5.9.tgz#b2e8e68c4ff566cc366504d87a75d33723f367d6"
+  integrity sha512-wGh4mUHjjWzMwJMCo3z4GOYe9a2QKgvg1bge0gIg8Je6LKNID+/EFmcXuUDyk1KbUKHpWJIquVM9kFFyJyRY2A==
+
+"@fontsource/fredoka-one@^4.5.8":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/fredoka-one/-/fredoka-one-4.5.8.tgz#64343153eee0fda7f9eccfbb52db1dc8fc862521"
+  integrity sha512-HzmkLFOeJOgKg71Ggp1dTORNuVUGPlpSwBPpKCbDGDkVl2qc9FyhNblyHcrYrqIUAhQsWHNudjQXVfAeO3Fg1A==
+
+"@fontsource/fugaz-one@^4.5.8":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/fugaz-one/-/fugaz-one-4.5.8.tgz#7c7788f6bc5184e79cfed88cf1e4b7583394de34"
+  integrity sha512-hWQGNM/EXZR2GLHqAawLNjFP+LvV8P39roQpNjbVxftNGMzCbhe6eWACN625D8q8xrmUaJZ8CGLyfj8/ye6cnw==
+
+"@fontsource/kalam@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/kalam/-/kalam-4.5.9.tgz#12ca31cb7d68a07bd33fa672fe1a528fd8f23068"
+  integrity sha512-9gsrPS7oSFK67zAyUVKGaH8FnT7vVB9a2QL4zHP6RtpfVSbnLRf96h7eVqh6rcf+UCB5JL/dzyLRlShTjrEvTg==
+
+"@fontsource/lato@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/lato/-/lato-4.5.9.tgz#7c819b412581591f9abc1c04ea07d67af1e501cd"
+  integrity sha512-VkDnHBbPee/KMAUuBwe3rEKRDECo1MsA+I+ucZNU6FYdHrsv+SKpYgNr7nk/OhoaGrn9PrpXcmcd9eoD4J3Y6Q==
+
+"@fontsource/leckerli-one@^4.5.10":
+  version "4.5.10"
+  resolved "https://registry.yarnpkg.com/@fontsource/leckerli-one/-/leckerli-one-4.5.10.tgz#82f9d37561e9d44d340b7cd3f218b7d7ae2698d3"
+  integrity sha512-SvVx2oPu/KFqyqXxP5v3SD0/T8meel080qCb6EykbGqflsyWVgku63DUZsvW9/Af79ol88SELWdBP2H5+kN28A==
+
+"@fontsource/monoton@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/monoton/-/monoton-4.5.9.tgz#fb44381017b915ece826d3ff7d123708fed8506a"
+  integrity sha512-9/YHRuPfEdi/KQwcHZOueryPNhbOWBsJsGp3egAEC1QdA8+KhfX0l5xqvzz1O2aP40n/JCaerfg4uYLwrG5aqg==
+
+"@fontsource/montserrat@^4.5.12":
+  version "4.5.12"
+  resolved "https://registry.yarnpkg.com/@fontsource/montserrat/-/montserrat-4.5.12.tgz#465c61fb508f6d0055dbcbfbc6eb7307a81fdf6f"
+  integrity sha512-UQ+4ijm1sddIBtmEZ9bKgCB1rSi4Imog0YKz7wDLtMQ3Mw2ZaBseTgoLDfbWnfdowS0PLp+Z4T2KZ/1AySTlDQ==
+
 "@fontsource/roboto@^4.5.8":
   version "4.5.8"
   resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.5.8.tgz#56347764786079838faf43f0eeda22dd7328437f"
   integrity sha512-CnD7zLItIzt86q4Sj3kZUiLcBk1dSk81qcqgMGaZe7SQ1P8hFNxhMl5AZthK1zrDM5m74VVhaOpuMGIL4gagaA==
+
+"@fontsource/rubik-dirt@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/rubik-dirt/-/rubik-dirt-4.5.0.tgz#0a5a24a67561bb37eb6b7faeb2ea4d46215943f9"
+  integrity sha512-UqXoSzSQtnea7njrIx4AQO6m3wZ3/r4hqbyqoex0b2Jkfx9JxKphZJHiLl7S9KzADDHb1uktuugJIXxU2WRZww==
+
+"@fontsource/smokum@^4.5.6":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/smokum/-/smokum-4.5.6.tgz#793336d1fe3cc29491cb1700429ce307b92a883c"
+  integrity sha512-euHhaURj5XAAlp4IyctoQf0jVums7+u0hxYOdLCkqcpxz8Tluq44+rZUGpGTwE5jFv9XozBaa2LP19hYm6+Xxw==
+
+"@fontsource/sriracha@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/sriracha/-/sriracha-4.5.9.tgz#50aac63926e5f2e5e8902170b12802caa8a409f4"
+  integrity sha512-BgpfmFyqHDSy3f4YeAD+/sywUrsTxXp1oiZLVpUnR5/W2UihlBcFL681+Ugtg7zYyW05+AL7wqGUc6fO9l3vwg==
 
 "@humanwhocodes/config-array@^0.10.4":
   version "0.10.4"

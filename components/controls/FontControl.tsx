@@ -11,8 +11,25 @@ import {
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ControlComponent } from '.';
+
+const kIncludedFonts = [
+  'Roboto',
+  'Lato',
+  'Montserrat',
+  'Fira Sans',
+  'Bungee',
+  'Fredoka One',
+  'Fugaz One',
+  'Monoton',
+  'Rubik Dirt',
+  'Smokum',
+  'Nabla',
+  'Kalam',
+  'Leckerli One',
+  'Sriracha',
+];
 
 const kFontList = new Set([
   // Windows 10
@@ -137,18 +154,17 @@ const kFontList = new Set([
   'Trebuchet MS',
   'Verdana',
   'Zapfino',
-  'Roboto',
 ]);
 
 function useFonts(): string[] {
-  const [fonts, setFonts] = useState<string[]>([]);
+  const [fonts, setFonts] = useState<string[]>([...kIncludedFonts]);
 
   useEffect(() => {
     (async () => {
       const fonts = await document.fonts?.ready;
       if (!fonts) return;
 
-      const filtered: string[] = [];
+      const filtered: string[] = [...kIncludedFonts];
       kFontList.forEach((font) => {
         if (fonts.check(`12px '${font}'`)) {
           filtered.push(font);
@@ -175,6 +191,11 @@ export const FontControl: ControlComponent = ({ clock, setClock }) => {
         }
         renderInput={(params) => (
           <TextField {...params} label="Font Family" placeholder="Roboto" />
+        )}
+        renderOption={(props, option) => (
+          <li style={{ fontFamily: option }} {...props}>
+            {option}
+          </li>
         )}
         options={fonts}
         freeSolo
