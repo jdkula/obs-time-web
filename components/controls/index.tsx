@@ -21,7 +21,7 @@ import { TimeZoneControl, TimeZoneSelection } from './TimeZoneControl';
 
 export type ControlComponent<
   Clock extends OBSClockDefinition = OBSClockDefinition,
-  P = {}
+  P = {},
 > = React.FC<
   P & {
     clock: Clock;

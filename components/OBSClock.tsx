@@ -114,12 +114,12 @@ export function getClockInfo(
         status: !state.startTime
           ? 'stopped'
           : state.pauseTime
-          ? 'paused'
-          : clock.stopAtZero && stamp == 0
-          ? 'zero'
-          : stamp < 0
-          ? 'negative'
-          : 'running',
+            ? 'paused'
+            : clock.stopAtZero && stamp == 0
+              ? 'zero'
+              : stamp < 0
+                ? 'negative'
+                : 'running',
       };
     }
     case 'stopwatch': {
@@ -134,8 +134,8 @@ export function getClockInfo(
         status: !state.startTime
           ? 'stopped'
           : state.pauseTime
-          ? 'paused'
-          : 'running',
+            ? 'paused'
+            : 'running',
       };
     }
   }
