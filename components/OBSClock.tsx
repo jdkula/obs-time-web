@@ -314,7 +314,7 @@ export function OBSClock({ clock, state, setState, fontSize }: OBSClockProps) {
     }
 
     const start = () => {
-      if (state.startTime === undefined) {
+      if (!state.startTime) {
         setState({
           id: state.id,
           lastTouch: Date.now(),
