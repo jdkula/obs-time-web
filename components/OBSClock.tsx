@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 import { durationToString } from '~/lib/util';
-import { Textfit } from 'react-textfit';
-import { css, IconButton, NoSsr } from '@mui/material';
+import { IconButton, NoSsr } from '@mui/material';
 import { Pause, PlayArrow, Refresh } from '@mui/icons-material';
 import styles from '~/styles/Clock.module.css';
 
@@ -27,8 +26,10 @@ interface CommonOptions {
   durationStr?: string;
 }
 
+export type AutoStartOption = 'stream' | 'record' | 'both';
+
 interface CountOptions extends CommonOptions {
-  autoStart?: boolean;
+  autoStart?: boolean | AutoStartOption;
   resetAfter?: number;
   colorOnPaused?: string;
   outlineOnPaused?: string;
@@ -312,9 +313,38 @@ export function OBSClock({ clock, state, setState, fontSize }: OBSClockProps) {
       return;
     }
 
-    if (clock.autoStart && state.startTime === undefined) {
-      setState({ id: state.id, lastTouch: Date.now(), startTime: Date.now() });
+    const start = () => {
+      if (state.startTime === undefined) {
+        setState({
+          id: state.id,
+          lastTouch: Date.now(),
+          startTime: Date.now(),
+        });
+      }
+    };
+
+    if (clock.autoStart === true) {
+      start();
     }
+    if (typeof window.obsstudio !== 'undefined') {
+      if (clock.autoStart === 'stream' || clock.autoStart === 'both') {
+        window.addEventListener('obsStreamingStarted', start);
+      }
+      if (clock.autoStart === 'record' || clock.autoStart === 'both') {
+        window.addEventListener('obsRecordingStarted', start);
+      }
+    }
+
+    return () => {
+      if (typeof window.obsstudio !== 'undefined') {
+        if (clock.autoStart === 'stream' || clock.autoStart === 'both') {
+          window.removeEventListener('obsStreamingStarted', start);
+        }
+        if (clock.autoStart === 'record' || clock.autoStart === 'both') {
+          window.removeEventListener('obsRecordingStarted', start);
+        }
+      }
+    };
   }, [clock, state, setState]);
 
   useEffect(() => {
