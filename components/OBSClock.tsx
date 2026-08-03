@@ -63,9 +63,7 @@ export interface TimerDefinition extends CountOptions {
 }
 
 export type OBSClockDefinition =
-  | ClockDefinition
-  | StopwatchDefinition
-  | TimerDefinition;
+  ClockDefinition | StopwatchDefinition | TimerDefinition;
 
 export interface ClockState {
   id: string;
@@ -102,7 +100,7 @@ export function getClockInfo(
     }
     case 'timer': {
       const start = state.startTime ?? Date.now();
-      const end = state.startTime ? state.pauseTime ?? Date.now() : start;
+      const end = state.startTime ? (state.pauseTime ?? Date.now()) : start;
       let stamp = start - end + clock.durationMs;
       if (clock.stopAtZero) stamp = Math.max(0, stamp);
       return {
@@ -124,7 +122,7 @@ export function getClockInfo(
     }
     case 'stopwatch': {
       const start = state.startTime ?? Date.now();
-      const end = state.startTime ? state.pauseTime ?? Date.now() : start;
+      const end = state.startTime ? (state.pauseTime ?? Date.now()) : start;
       return {
         text: durationToString(end - start, clock.showMs ?? false),
         hideColons:
